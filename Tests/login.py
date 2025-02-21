@@ -1,23 +1,32 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
-import time;
+import time	
+import unittest
+from Pages.loginPage import LoginPage
 
-chrome_driver_path = "D:/Work/MG/Selenium/selenium-pom-project1/Drivers/chromedriver.exe"
-service = Service(chrome_driver_path)
-driver = webdriver.Chrome(service=service)
+class LoginTest(unittest.TestCase):
 
-driver.implicitly_wait(10)
-driver.maximize_window
+	@classmethod
+	def setUpClass(cls):
+		cls.chrome_driver_path = "D:/Work/MG/Selenium/selenium-pom-project1/Drivers/chromedriver.exe"
+		cls.service = Service(cls.chrome_driver_path)
+		cls.driver = webdriver.Chrome(service=cls.service)
+		cls.driver.implicitly_wait(10)
+		cls.driver.maximize_window()
 
-driver.get("https://cme-staging.vercel.app/login")
-emailInput = driver.find_element(By.XPATH,"//input[contains(@placeholder,'Email')]")
-emailInput.click()
-emailInput.send_keys('retailer_test@mail.com')
-passwordInput = driver.find_element(By.XPATH,"//input[contains(@placeholder,'Password')]")
-passwordInput.click()
-passwordInput.send_keys('PAssword123!')
-submitButton = driver.find_element(By.XPATH, "//button[contains(normalize-space(), 'Login')]")
-submitButton.click()
-time.sleep(10)
-driver.quit()
+	def test_login_valid(self):
+		driver = self.driver
+		driver.get("https://cme-staging.vercel.app/login")
+
+		login = LoginPage(driver)
+		login.enter_email("retailer_test@mail.com")
+		login.enter_password("PAssword123!")
+		login.click_login()
+		time.sleep(10)
+
+	@classmethod
+	def tearDown(cls):
+		cls.driver.quit()
+		print("Test Completed Successfully!")
+
